@@ -287,6 +287,56 @@
     </div>
   </div>
 
+  <!-- Donation receipt confirmation popup -->
+<div id="receiptModal"
+     class="fixed inset-0 z-[70] hidden modal-backdrop items-center justify-center p-4"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="receiptTitle">
+
+  <div class="glass-panel w-full max-w-md rounded-2xl border border-gray-700 p-6 text-center shadow-2xl">
+
+    <div class="text-emerald-400 text-4xl mb-4">
+      <i class="fa-solid fa-circle-check"></i>
+    </div>
+
+    <h2 id="receiptTitle" class="text-xl font-bold text-white mb-3">
+      One More Step!
+    </h2>
+
+    <p class="text-sm text-gray-300 leading-relaxed mb-4">
+      Thank you for supporting HopeHaven Foundation.
+      Please contact our team on Telegram and send a screenshot
+      of your completed USDT payment receipt.
+    </p>
+
+    <p id="receiptDetails"
+       class="text-xs text-emerald-300 mb-4">
+    </p>
+
+    <div class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 mb-5">
+      <p class="text-xs text-amber-200">
+        Your donation will remain unconfirmed until our team
+        reviews your payment receipt.
+      </p>
+    </div>
+
+    <a href="https://t.me/team_rp247"
+       target="_blank"
+       rel="noopener noreferrer"
+       class="block w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-xl text-sm">
+      <i class="fa-brands fa-telegram mr-2"></i>
+      Contact Us on Telegram
+    </a>
+
+    <button type="button"
+            id="receiptClose"
+            class="mt-4 text-gray-400 hover:text-white text-sm">
+      Close
+    </button>
+
+  </div>
+</div>
   <div id="toast" class="toast fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] glass-panel border border-emerald-500/40 text-emerald-200 px-5 py-3 rounded-xl text-xs font-bold shadow-2xl max-w-[90vw] text-center" role="status" aria-live="polite"></div>
 
   <script>
@@ -386,14 +436,38 @@
       });
 
       document.getElementById('sentButton').addEventListener('click', () => {
-        const amount = Number(amountInput.value);
-        if (!Number.isFinite(amount) || amount < 100 || amount > 5000) {
-          showToast('Enter an amount between $100 and $5,000.');
-          amountInput.focus();
-          return;
-        }
-        showToast('Thank you. Keep your transaction ID and contact the foundation to confirm your donation.');
-      });
+  const amount = Number(amountInput.value);
+
+  if (!Number.isFinite(amount) || amount < 100 || amount > 5000) {
+    showToast('Enter an amount between $100 and $5,000.');
+    amountInput.focus();
+    return;
+  }
+
+  document.getElementById('receiptDetails').textContent =
+    `Donation amount: $${amount.toLocaleString('en-US')} USDT | Network: ${activeNetwork}`;
+
+  closeModal();
+
+  const receiptModal = document.getElementById('receiptModal');
+  receiptModal.classList.remove('hidden');
+  receiptModal.classList.add('flex');
+
+  document.getElementById('receiptClose').focus();
+});
+
+document.getElementById('receiptClose').addEventListener('click', () => {
+  const receiptModal = document.getElementById('receiptModal');
+  receiptModal.classList.add('hidden');
+  receiptModal.classList.remove('flex');
+});
+
+document.getElementById('receiptModal').addEventListener('click', event => {
+  if (event.target === event.currentTarget) {
+    event.currentTarget.classList.add('hidden');
+    event.currentTarget.classList.remove('flex');
+  }
+});
 
       document.getElementById('year').textContent = new Date().getFullYear();
     })();
